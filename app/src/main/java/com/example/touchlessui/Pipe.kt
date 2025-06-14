@@ -17,6 +17,7 @@ class Pipe(context: Context, private val screenWidth: Int, private val screenHei
 
     // X position starts off-screen to the right
     var x = screenWidth.toFloat()
+    var isScored = false
     // Randomize center of gap between some margins
     private val centerY = Random.nextInt(gap, screenHeight - gap)
 

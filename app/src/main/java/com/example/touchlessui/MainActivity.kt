@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var ivReady: ImageView
     private lateinit var ivPause: ImageView
     private lateinit var ivPlay: ImageView
+    private lateinit var ivRestart: ImageView
     private lateinit var previewView: PreviewView
 
     private val cameraPermission =
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
         ivReady = findViewById(R.id.ivReady)
         ivPause = findViewById(R.id.ivPause)
         ivPlay = findViewById(R.id.ivPlay)
+        ivRestart = findViewById(R.id.ivRestart)
         previewView = findViewById(R.id.previewView)
 
         // DEBUG: show a toast whenever the overlay is tapped
@@ -43,6 +45,7 @@ class MainActivity : AppCompatActivity() {
             it.visibility = View.GONE        // hide the overlay
             ivPause.visibility = View.VISIBLE
             ivPlay.visibility = View.GONE
+            ivRestart.visibility = View.GONE
             gameView.startGame()            // switch to RUNNING
         }
 
@@ -50,6 +53,14 @@ class MainActivity : AppCompatActivity() {
             gameView.pauseGame()
             ivPause.visibility = View.GONE
             ivPlay.visibility = View.VISIBLE
+        }
+
+        ivRestart.setOnClickListener {
+            ivRestart.visibility = View.GONE
+            ivReady.visibility = View.GONE
+            ivPause.visibility = View.VISIBLE
+            ivPlay.visibility = View.GONE
+            gameView.startGame()
         }
 
         ivPlay.setOnClickListener {
@@ -61,7 +72,8 @@ class MainActivity : AppCompatActivity() {
         gameView.onGameOver = {
             ivPause.visibility = View.GONE
             ivPlay.visibility = View.GONE
-            ivReady.visibility = View.VISIBLE
+            ivReady.visibility = View.GONE
+            ivRestart.visibility = View.VISIBLE
         }
 
         // Request camera
@@ -92,6 +104,8 @@ class MainActivity : AppCompatActivity() {
                             if (gameView.isGameOver) {
                                 ivPause.visibility = View.VISIBLE
                                 ivPlay.visibility = View.GONE
+                                ivRestart.visibility = View.GONE
+                                ivReady.visibility = View.GONE
                                 gameView.startGame()
                             } else {
                                 Log.d("MainActivity", "Blink detected → flap()")
