@@ -18,7 +18,6 @@ class GameView(context: Context, attrs: AttributeSet) : SurfaceView(context, att
 
   private var state = GameState.READY
   private var gameThread: GameThread? = null
-  var isPaused = false
 
   // Game objects
   private val bird = BirdBitmap(context, BirdBitmap.BirdColor.YELLOW)
@@ -33,12 +32,17 @@ class GameView(context: Context, attrs: AttributeSet) : SurfaceView(context, att
   }
 
   private var spawnTicker = 0
-  private val spawnInterval = 100  // frames between new pipes
+  // Spawn pipes a little sooner to keep the game engaging
+  private val spawnInterval = 70  // frames between new pipes (~1s at 60fps)
 
   var isGameOver = false
+  var isPaused = false
+  var onGameOver: (() -> Unit)? = null
 
   // How “zoomed in” the world is. 1f = normal, >1f zooms in, <1f zooms out.
-  private val zoom = 1.5f
+  // Previous value was 1.5f which cropped a large portion of the scene.
+  // Using 1f shows the entire background and ground.
+  private val zoom = 1f
 
   // Background and ground bitmaps
   private val bgBitmap = BitmapFactory.decodeResource(resources, R.drawable.background_day)
@@ -62,13 +66,30 @@ class GameView(context: Context, attrs: AttributeSet) : SurfaceView(context, att
     // Called when user clicks “Ready” or blinks on READY
     state = GameState.RUNNING
     pipes.clear()
-    spawnTicker = 0
+    // Pre-load the ticker so the first pipe spawns right away
+    spawnTicker = spawnInterval
     score = 0
     bird.reset(width, height)
+    isGameOver = false
+    isPaused = false
   }
 
   fun gameOver() {
     state = GameState.GAME_OVER
+    isGameOver = true
+    onGameOver?.invoke()
+  }
+
+  fun pauseGame() {
+    if (state == GameState.RUNNING) {
+      isPaused = true
+    }
+  }
+
+  fun resumeGame() {
+    if (state == GameState.RUNNING) {
+      isPaused = false
+    }
   }
 
   fun flap() {
@@ -78,9 +99,11 @@ class GameView(context: Context, attrs: AttributeSet) : SurfaceView(context, att
   fun update() {
     when (state) {
       GameState.RUNNING -> {
-        bird.update() // Remove zoom argument
-        updatePipes()
-        checkCollisions()
+        if (!isPaused) {
+          bird.update() // Remove zoom argument
+          updatePipes()
+          checkCollisions()
+        }
       }
       else -> { /* no physics in READY or GAME_OVER */ }
     }
@@ -106,7 +129,8 @@ class GameView(context: Context, attrs: AttributeSet) : SurfaceView(context, att
   fun render(canvas: Canvas) {
     // 1) Zoomed world
     canvas.save()
-    canvas.scale(zoom, zoom)
+    // Scale around the center so the scene remains fully visible
+    canvas.scale(zoom, zoom, width / 2f, height / 2f)
 
     // — Draw background
     canvas.drawBitmap(bgBitmap, null, android.graphics.Rect(0, 0, width, height), null)
@@ -150,7 +174,7 @@ class GameView(context: Context, attrs: AttributeSet) : SurfaceView(context, att
   private fun updatePipes() {
     spawnTicker++
     if (spawnTicker >= spawnInterval) {
-      val spawnX = (width / zoom)
+      val spawnX = (width / zoom) + 100  // start just off-screen
       pipes.add(Pipe(context, spawnX.toInt(), height))
       spawnTicker = 0
     }
