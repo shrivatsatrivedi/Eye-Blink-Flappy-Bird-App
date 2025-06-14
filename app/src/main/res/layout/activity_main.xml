@@ -39,8 +39,7 @@
         android:id="@+id/ivPlay"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_gravity="top|end"
-        android:layout_margin="16dp"
+        android:layout_gravity="center"
         android:src="@drawable/ic_play"
         android:contentDescription="@string/resume_game"
         android:visibility="gone"/>

@@ -13,7 +13,9 @@ class GameThread(
         while (running) {
             val canvas: Canvas? = holder.lockCanvas()
             canvas?.let {
-                gameView.update()
+                if (!gameView.isPaused) {
+                    gameView.update()
+                }
                 gameView.render(it)
                 holder.unlockCanvasAndPost(it)
             }

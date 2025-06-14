@@ -19,6 +19,8 @@ import androidx.camera.view.PreviewView
 class MainActivity : AppCompatActivity() {
     private lateinit var gameView: GameView
     private lateinit var ivReady: ImageView
+    private lateinit var ivPause: ImageView
+    private lateinit var ivPlay: ImageView
     private lateinit var previewView: PreviewView
 
     private val cameraPermission =
@@ -31,13 +33,35 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         gameView = findViewById(R.id.gameView)
         ivReady = findViewById(R.id.ivReady)
+        ivPause = findViewById(R.id.ivPause)
+        ivPlay = findViewById(R.id.ivPlay)
         previewView = findViewById(R.id.previewView)
 
         // DEBUG: show a toast whenever the overlay is tapped
         ivReady.setOnClickListener {
             Toast.makeText(this, "Tapped READY – starting game…", Toast.LENGTH_SHORT).show()
             it.visibility = View.GONE        // hide the overlay
+            ivPause.visibility = View.VISIBLE
+            ivPlay.visibility = View.GONE
             gameView.startGame()            // switch to RUNNING
+        }
+
+        ivPause.setOnClickListener {
+            gameView.pauseGame()
+            ivPause.visibility = View.GONE
+            ivPlay.visibility = View.VISIBLE
+        }
+
+        ivPlay.setOnClickListener {
+            gameView.resumeGame()
+            ivPlay.visibility = View.GONE
+            ivPause.visibility = View.VISIBLE
+        }
+
+        gameView.onGameOver = {
+            ivPause.visibility = View.GONE
+            ivPlay.visibility = View.GONE
+            ivReady.visibility = View.VISIBLE
         }
 
         // Request camera
@@ -66,6 +90,8 @@ class MainActivity : AppCompatActivity() {
                     FaceAnalyzer(
                         onBlink = { runOnUiThread {
                             if (gameView.isGameOver) {
+                                ivPause.visibility = View.VISIBLE
+                                ivPlay.visibility = View.GONE
                                 gameView.startGame()
                             } else {
                                 Log.d("MainActivity", "Blink detected → flap()")

@@ -40,8 +40,9 @@ class BirdBitmap(context: Context, birdColor: BirdColor) {
     private var frameTicker = 0
 
     companion object {
-        private const val GRAVITY = 0.5f // Smoother, less jumpy gravity
-        private const val FLAP_STRENGTH = -8f // Smoother, less jumpy flap
+        // Tune the physics constants to better match the original game feel
+        private const val GRAVITY = 0.4f
+        private const val FLAP_STRENGTH = -9f
         private const val FRAME_DELAY = 3  // Faster animation
     }
 
@@ -76,8 +77,8 @@ class BirdBitmap(context: Context, birdColor: BirdColor) {
         val deltaTime = (currentTime - lastUpdateTime) / 1_000_000_000f // seconds
         lastUpdateTime = currentTime
 
-        // Use deltaTime for smooth physics, but scale less for slightly slower movement
-        val scale = 45f // was 60f, lower = slower
+        // Use deltaTime for smooth physics. 60f closely matches the classic timing
+        val scale = 60f
         velocityY += GRAVITY * deltaTime * scale
         y += velocityY * deltaTime * scale
 
