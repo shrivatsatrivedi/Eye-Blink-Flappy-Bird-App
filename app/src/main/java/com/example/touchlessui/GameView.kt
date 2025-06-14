@@ -77,7 +77,7 @@ class GameView(context: Context, attrs: AttributeSet) : SurfaceView(context, att
   fun gameOver() {
     state = GameState.GAME_OVER
     isGameOver = true
-    onGameOver?.invoke()
+    post { onGameOver?.invoke() }
   }
 
   fun pauseGame() {
@@ -178,7 +178,13 @@ class GameView(context: Context, attrs: AttributeSet) : SurfaceView(context, att
       pipes.add(Pipe(context, spawnX.toInt(), height))
       spawnTicker = 0
     }
-    pipes.forEach { it.update() }
+    pipes.forEach {
+      it.update()
+      if (!it.isScored && it.scored(bird.x)) {
+        score++
+        it.isScored = true
+      }
+    }
     pipes.removeAll { it.isOffScreen() }
   }
 
