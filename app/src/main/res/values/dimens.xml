@@ -1,0 +1,5 @@
+<resources>
+    <!-- 48sp is just a starting point; feel free to adjust -->
+    <dimen name="score_text_size">48sp</dimen>
+</resources>
+

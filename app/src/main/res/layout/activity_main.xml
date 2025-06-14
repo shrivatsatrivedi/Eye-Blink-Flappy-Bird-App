@@ -1,0 +1,48 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/previewView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"/>
+
+    <!-- 1) GameView stays here, but we won’t auto‑start the game -->
+    <com.example.touchlessui.GameView
+        android:id="@+id/gameView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- 2) Ready screen overlay using the message.png asset -->
+    <ImageView
+        android:id="@+id/ivReady"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/message"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/start_game"
+        android:clickable="true"
+        android:focusable="true"/>
+
+    <!-- 3) Pause/play icons as before -->
+    <ImageView
+        android:id="@+id/ivPause"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_pause"
+        android:contentDescription="@string/pause_game"
+        android:visibility="gone"/>
+    <ImageView
+        android:id="@+id/ivPlay"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_play"
+        android:contentDescription="@string/resume_game"
+        android:visibility="gone"/>
+
+</FrameLayout>
